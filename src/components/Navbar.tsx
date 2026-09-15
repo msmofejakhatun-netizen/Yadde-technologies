@@ -1,168 +1,117 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { Mail, Menu, X } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
-import { PageRoute } from '../types';
+import { COMPANY_INFO } from '../data/companyData';
 
 interface NavbarProps {
-  currentRoute: PageRoute;
-  onNavigate: (route: PageRoute) => void;
+  onNavigate: (sectionId: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onNavigate }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
+export const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems: { label: string; route: PageRoute }[] = [
-    { label: 'Home', route: 'home' },
-    { label: 'About', route: 'about' },
-    { label: 'Products', route: 'products' },
-    { label: 'Contact', route: 'contact' },
+  const navLinks = [
+    { label: 'Home', target: 'home' },
+    { label: 'Apps', target: 'apps' },
+    { label: 'About', target: 'about' },
+    { label: 'Contact', target: 'contact' },
   ];
 
-  const handleNavClick = (route: PageRoute) => {
-    onNavigate(route);
+  const handleLinkClick = (target: string) => {
     setMobileMenuOpen(false);
+    onNavigate(target);
   };
 
   return (
-    <>
-      <header
-        id="site-header"
-        className={`sticky top-0 z-50 transition-all duration-200 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-200 py-3'
-            : 'bg-white border-b border-slate-100 py-4'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Logo / Brand */}
-          <button
-            onClick={() => handleNavClick('home')}
-            className="flex items-center text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg"
-            id="nav-brand-button"
-            aria-label="YADDE TECHNOLOGIES Home"
-          >
-            <BrandLogo size="md" variant="dark" />
-          </button>
+    <header
+      id="main-navbar"
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-[#070b14]/95 backdrop-blur-md border-b border-slate-800/80 shadow-lg shadow-black/40'
+          : 'bg-[#070b14]/80 backdrop-blur-sm border-b border-slate-800/40'
+      }`}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Logo */}
+          <BrandLogo onClick={() => handleLinkClick('home')} />
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1.5" aria-label="Main Navigation">
-            {navItems.map((item) => {
-              const isActive = currentRoute === item.route;
-              return (
-                <button
-                  key={item.route}
-                  id={`nav-link-${item.route}`}
-                  onClick={() => handleNavClick(item.route)}
-                  className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors relative ${
-                    isActive
-                      ? 'text-blue-600 font-semibold bg-blue-50/60'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                  }`}
-                >
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute bottom-1 left-3.5 right-3.5 h-0.5 bg-blue-600 rounded-full" />
-                  )}
-                </button>
-              );
-            })}
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+            {navLinks.map((link) => (
+              <button
+                key={link.target}
+                onClick={() => handleLinkClick(link.target)}
+                className="hover:text-white transition-colors cursor-pointer py-1 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-cyan-400 hover:after:w-full after:transition-all"
+              >
+                {link.label}
+              </button>
+            ))}
           </nav>
 
-          {/* Desktop Right CTA: Contact Us button */}
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={() => handleNavClick('contact')}
-              id="desktop-header-contact-btn"
-              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          {/* Right-Side Desktop Button */}
+          <div className="hidden md:flex items-center">
+            <a
+              href={`mailto:${COMPANY_INFO.supportEmail}`}
+              id="nav-contact-support-btn"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-white bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700/80 hover:border-cyan-500/50 px-4 py-2.5 rounded-lg transition-all shadow-sm"
             >
-              <span>Contact Us</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+              <Mail className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Contact Support</span>
+            </a>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center">
             <button
-              onClick={() => handleNavClick('contact')}
-              id="mobile-header-contact-quick-btn"
-              className="text-xs font-semibold bg-slate-900 text-white px-3 py-1.5 rounded-md"
-            >
-              Contact Us
-            </button>
-            <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              id="mobile-menu-toggle-btn"
-              className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-expanded={mobileMenuOpen}
+              className="p-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/70 border border-slate-800 focus:outline-none transition-colors"
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div
-          id="mobile-navigation-drawer"
-          className="fixed inset-0 z-40 md:hidden bg-slate-900/50 backdrop-blur-xs flex flex-col pt-16"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <div
-            className="bg-white border-b border-slate-200 shadow-xl px-5 py-6 space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 font-mono">
-                Menu
-              </span>
-              <span className="text-xs font-mono text-slate-400">yaddetechnologies.in</span>
-            </div>
-
-            <div className="space-y-1">
-              {navItems.map((item) => {
-                const isActive = currentRoute === item.route;
-                return (
-                  <button
-                    key={item.route}
-                    id={`mobile-nav-${item.route}`}
-                    onClick={() => handleNavClick(item.route)}
-                    className={`w-full flex items-center justify-between px-3.5 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-700 font-semibold'
-                        : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    <span className="text-xs text-slate-400 font-mono">→</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="pt-3 border-t border-slate-100">
+        <div className="md:hidden bg-[#0a0f1d] border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+          <nav className="flex flex-col space-y-1">
+            {navLinks.map((link) => (
               <button
-                onClick={() => handleNavClick('contact')}
-                id="mobile-drawer-contact-cta"
-                className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white font-semibold py-3 rounded-lg text-sm shadow-sm"
+                key={link.target}
+                onClick={() => handleLinkClick(link.target)}
+                className="text-left px-3 py-3 rounded-md text-sm font-medium text-slate-200 hover:text-white hover:bg-slate-800/60 transition-colors"
               >
-                <span>Contact Us</span>
-                <ArrowRight className="w-4 h-4" />
+                {link.label}
               </button>
-            </div>
+            ))}
+          </nav>
+
+          <div className="pt-3 border-t border-slate-800">
+            <a
+              href={`mailto:${COMPANY_INFO.supportEmail}`}
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full inline-flex items-center justify-center gap-2 text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 px-4 py-3 rounded-lg transition-colors"
+            >
+              <Mail className="w-4 h-4 text-cyan-400" />
+              <span>Contact Support</span>
+            </a>
           </div>
         </div>
       )}
-    </>
+    </header>
   );
 };

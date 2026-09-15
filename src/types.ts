@@ -1,30 +1,24 @@
-export type PageRoute =
-  | 'home'
-  | 'about'
-  | 'products'
-  | 'contact'
-  | 'privacy-policy'
-  | 'terms'
-  | '404';
-
-export interface ProductItem {
+export interface AppItem {
   id: string;
   name: string;
-  shortDescription: string;
-  platform: string;
-  status: 'Coming Soon' | 'Published';
-  playStoreUrl?: string;
-  features?: string[];
-}
-
-export interface ApproachCard {
-  title: string;
+  category: string;
+  status: 'COMING SOON';
   description: string;
+  iconType: 'billing' | 'railway';
 }
 
-export interface ContactFormData {
+export interface CompanyInfo {
   name: string;
-  email: string;
-  subject: string;
-  message: string;
+  brandFirst: string;
+  brandSecond: string;
+  tagline: string;
+  websiteUrl: string;
+  supportEmail: string;
+  heroHeadline: string;
+  heroText: string;
+  aboutText: string;
+  comingSoonHeading: string;
+  comingSoonText: string;
+  supportText: string;
+  copyright: string;
 }
