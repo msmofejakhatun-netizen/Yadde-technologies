@@ -1,0 +1,6 @@
+{
+  "name": "YADDE TECHNOLOGIES",
+  "description": "Yadde Technologies is a software and technology company developing and publishing its own digital products and applications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
